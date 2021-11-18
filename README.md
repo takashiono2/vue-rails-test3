@@ -1,1 +1,0 @@
-# vue-rails-test4
