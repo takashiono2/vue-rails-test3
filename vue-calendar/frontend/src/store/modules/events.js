@@ -1,30 +1,31 @@
 import axios from "axios";
 
 const apiUrl = "http://localhost:3000";
-
+//初期状態です
 const state = {
   events: [],
+  //eventの初期値をnullとする
 };
 
 const getters = {
-  events: state => state.events.map(event =>{
+  events: state => state.events.map(event => {
     return {
       ...event,
-      satart: new Date(event.start),
+      start: new Date(event.start),
       end: new Date(event.end)
     };
-  })
+  }),
+  //event: state => state.event ? で三項演算子データが入った時とnullの時
 };
-
+//更新情報です
 const mutations = {
   setEvents: (state, events) => (state.events = events),
+  //eventの時
 };
-
+//外部からのactionに対応します
 const actions = {
-  async fetchEvents ({ commit }) {
-    const response = await axios.get(`${apiUrl}/events`);
-    commit("setEvents",response.data);
-  }
+  //fetchEventsは非同期処理で実行（commit）
+  //setEvent処理で実行（commit）
 };
 
 export default {
@@ -32,5 +33,5 @@ export default {
   state,
   getters,
   mutations,
-  actions,
+  actions
 };
