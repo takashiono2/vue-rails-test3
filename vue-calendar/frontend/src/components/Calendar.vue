@@ -22,45 +22,43 @@
         @click:event="showEvent"
       ></v-calendar>
     </v-sheet>
-    <v-dialog><!--eventの値がnullでないなら、バインディングする-->
-      <div><!--eventの値がnullでないなら-->
-        <v-card>
-          <h1>イベント詳細</h1>
-          <p>name: {{ event.name }}</p>
-          <p>start: {{ event.start.toLocaleString() }}</p>
-          <p>end: {{ event.end.toLocaleString() }}</p>
-          <p>timed: {{ event.timed }}</p>
-          <p>description: {{ event.description }}</p>
-          <p>color: {{ event.color }}</p>
-        </v-card>
-      </div>
+
+    <v-dialog :value="event !== null" @click:outside="closeDialog" width="600">
+      <EventDetailDialog v-if="event !== null" />
     </v-dialog>
+
   </div>
 </template>
 
 <script>
 import { format } from 'date-fns';
 import { mapGetters, mapActions } from 'vuex';
+import EventDetailDialog from './EventDetailDialog';
 
 export default {
   name: 'Calendar',
+  components: {
+    EventDetailDialog,
+  },
   data: () => ({
     value: format(new Date(), 'yyyy/MM/dd'),
   }),
   computed: {
-    ...mapGetters('events', ['events']),//event処理追加
+    ...mapGetters('events', ['events','event']),//event処理追加
     title() {
       return format(new Date(this.value), 'yyyy年 M月')
     },
   },
   methods: {
-    ...mapActions('events', ['fetchEvents']),
-    ...mapActions('events', ['fetchEvents']),//setEvent処理追加
+    ...mapActions('events', ['fetchEvents','setEvent']),//setEvent処理追加
     setToday() {
       this.value = format(new Date(), 'yyyy/MM/dd')
     },
-    showEvent({ event }) {
-      //setEventを実行
+    showEvent({event}){
+      this.setEvent(event);
+    },
+    closeDialog() {
+      this.setEvent(null);
     },
   }
 };

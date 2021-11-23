@@ -4,7 +4,7 @@ const apiUrl = "http://localhost:3000";
 //初期状態です
 const state = {
   events: [],
-  //eventの初期値をnullとする
+  event: null//eventの初期値をnullとする
 };
 
 const getters = {
@@ -15,17 +15,30 @@ const getters = {
       end: new Date(event.end)
     };
   }),
-  //event: state => state.event ? で三項演算子データが入った時とnullの時
+  event: state => state.event ? {
+    ... state.event,
+    start: new Date(state.event.start),
+    end: new Date(state.event.end)
+  } : null
 };
 //更新情報です
 const mutations = {
-  setEvents: (state, events) => (state.events = events),
-  //eventの時
+  setEvents: function(state, events){
+    return state.events = events
+  },
+  setEvent: function(state, event){
+    return state.event = event
+  }//eventの時
 };
 //外部からのactionに対応します
 const actions = {
-  //fetchEventsは非同期処理で実行（commit）
-  //setEvent処理で実行（commit）
+  async fetchEvents({commit}){
+    const response = await axios.get(`${apiUrl}/events`)
+    commit('setEvents',response.data)
+  },
+  setEvent({commit},event){
+    commit('setEvent',event)
+  }//setEvent関数で、setEventを実行（commit）、eventデータを渡す
 };
 
 export default {
